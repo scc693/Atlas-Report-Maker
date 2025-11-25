@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATLAS Daily Report Builder</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-YcsIPMgC2dOGqo4F6ekChUWd7dlt7EubuR7yKPJZIxwPv4DgVawQd3poH2dzUjGx6tCWefI+WZ2Yf3S2RZcS9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+  <main class="app-container">
+    <header>
+      <h1>ATLAS Daily Report Builder</h1>
+      <p class="lede">Generate daily work reports for construction and demolition jobs. Enter details below and export to Markdown, print, or PDF.</p>
+    </header>
+
+    <section class="card" id="project-info">
+      <h2>1) Project Info</h2>
+      <div class="grid two-col">
+        <label>Location
+          <input type="text" id="location" placeholder="Site address or description" />
+        </label>
+        <label>Date
+          <input type="date" id="report-date" />
+        </label>
+        <label>Foreman
+          <input type="text" id="foreman" placeholder="Foreman name" />
+        </label>
+        <label>Project Lead
+          <input type="text" id="project-lead" placeholder="Project lead name" />
+        </label>
+        <label>Time in
+          <input type="text" id="time-in" placeholder="8:00 am" />
+        </label>
+        <label>Time out
+          <input type="text" id="time-out" placeholder="4:30 pm" />
+        </label>
+      </div>
+      <label class="checkbox-inline">
+        <input type="checkbox" id="photos-sent" /> Photos sent
+      </label>
+    </section>
+
+    <section class="card" id="crew-section">
+      <div class="section-header">
+        <h2>2) Crew Members &amp; Hours</h2>
+        <button type="button" id="add-worker">Add Worker</button>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Time In</th>
+              <th>Time Out</th>
+              <th>Notes</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="crew-body">
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card" id="report-sections">
+      <h2>3) Report Sections</h2>
+      <label>Work Performed
+        <textarea id="work-performed" rows="4" placeholder="Describe work performed"></textarea>
+      </label>
+      <label>Equipment Used / Issues
+        <textarea id="equipment" rows="3" placeholder="List equipment and any issues"></textarea>
+      </label>
+      <label>Delays / Problems / Needs
+        <textarea id="delays" rows="3" placeholder="Describe delays or needs"></textarea>
+      </label>
+      <label>Hauling
+        <input type="text" id="hauling" placeholder="e.g. 3 trucks, 1 dumpster" />
+      </label>
+    </section>
+
+    <section class="card" id="output-actions">
+      <h2>4) Output &amp; Actions</h2>
+      <div class="button-row">
+        <button type="button" id="generate">Generate Markdown</button>
+        <button type="button" id="copy" disabled>Copy Markdown</button>
+        <button type="button" id="print" disabled>Print / Save as PDF</button>
+        <button type="button" id="download" disabled>Download PDF</button>
+      </div>
+      <label>Generated Markdown
+        <textarea id="markdown-output" rows="12" readonly></textarea>
+      </label>
+    </section>
+
+    <section class="card" id="report-preview">
+      <h2>Report Preview (HTML)</h2>
+      <div id="report-html" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script src="main.js"></script>
+</body>
+</html>
