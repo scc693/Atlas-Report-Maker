@@ -16,8 +16,10 @@
   const copyBtn = document.getElementById('copy');
   const printBtn = document.getElementById('print');
   const downloadBtn = document.getElementById('download');
+  const downloadDefaultLabel = downloadBtn.textContent;
   const markdownOutput = document.getElementById('markdown-output');
   const reportHtmlContainer = document.getElementById('report-html');
+  const html2PdfSrc = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
 
   const storageKeys = {
     location: 'atlas_location',
@@ -157,6 +159,33 @@
     return markdown;
   }
 
+  let html2PdfReadyPromise;
+
+  function ensureHtml2PdfLoaded() {
+    if (typeof html2pdf === 'function') {
+      return Promise.resolve();
+    }
+
+    if (!html2PdfReadyPromise) {
+      html2PdfReadyPromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = html2PdfSrc;
+        script.async = true;
+        script.onload = () => {
+          if (typeof html2pdf === 'function') {
+            resolve();
+          } else {
+            reject(new Error('html2pdf unavailable after loading script'));
+          }
+        };
+        script.onerror = () => reject(new Error('Failed to load html2pdf script'));
+        document.head.appendChild(script);
+      });
+    }
+
+    return html2PdfReadyPromise;
+  }
+
   function renderHtmlReport(data) {
     const crewList = data.crew.length ? `<p class="report-meta"><strong>Workers for today:</strong> ${data.crew.map((c) => c.name).join(', ')}</p>` : '';
     const crewTable = data.crew.length
@@ -280,7 +309,19 @@
       html2canvas: { scale: 2 },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
     };
-    html2pdf().set(options).from(element).save();
+    downloadBtn.disabled = true;
+    downloadBtn.textContent = 'Preparing PDF...';
+
+    ensureHtml2PdfLoaded()
+      .then(() => html2pdf().set(options).from(element).save())
+      .catch((err) => {
+        console.error(err);
+        alert('Unable to load PDF tools. Please check your connection and try again.');
+      })
+      .finally(() => {
+        downloadBtn.disabled = false;
+        downloadBtn.textContent = downloadDefaultLabel;
+      });
   }
 
   function attachStorageListeners() {
